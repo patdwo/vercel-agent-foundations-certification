@@ -35,6 +35,11 @@ The storefront only needs `BYPASS_SECRET` to run. The `STORE_BUSINESS_AGENT_*` v
 | --- | --- | --- |
 | `BYPASS_SECRET` | Yes | Vercel deployment-protection bypass secret. Sent as the `x-vercel-protection-bypass` header on every API call. Server-only — never give it a `NEXT_PUBLIC_` prefix. |
 | `API_BASE_URL` | No | Override the backend API base URL. Defaults to `https://vercel-agentic-swag-store-api.vercel.app/api`. |
+| `COMPANY_AI_BASE_URL` | Yes (chats) | Base URL of the OpenAI-compatible model endpoint used by both agents. Server-only. |
+| `COMPANY_AI_API_KEY` | Yes (chats) | API key for that endpoint. Server-only. |
+| `COMPANY_AI_MODEL` | No | Model id. Defaults to `gpt-5-mini`. |
+| `VERCEL_OIDC_TOKEN` | Admin `bash` tool and memory | Authenticates Vercel Sandbox, which holds the admin agent's calculations and its persistent `memory.md`. Run `vercel link` then `vercel env pull`. |
+| `ADMIN_PASSWORD` | No | Overrides the starter's demo admin password. |
 | `STORE_BUSINESS_AGENT_URL` | Admin chat only | HTTP base URL of the deployed store-business-agent. |
 | `STORE_BUSINESS_AGENT_BASIC_USER` | Admin chat only | HTTP Basic auth user matching the agent's `ADMIN_AGENT_BASIC_USER`. |
 | `STORE_BUSINESS_AGENT_BASIC_PASSWORD` | Admin chat only | HTTP Basic auth password matching the agent's `ADMIN_AGENT_BASIC_PASSWORD`. |

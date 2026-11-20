@@ -10,5 +10,7 @@
  * opaque token compared against a server-side allowlist (or a signed
  * value) before shipping anything user-facing.
  */
-export const ADMIN_PASSWORD = "letmeinadminagent";
+// Set ADMIN_PASSWORD in the environment to override the starter's demo value.
+export const ADMIN_PASSWORD =
+  process.env.ADMIN_PASSWORD ?? "letmeinadminagent";
 export const ADMIN_COOKIE_NAME = "admin_auth";
