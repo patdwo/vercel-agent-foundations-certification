@@ -8,6 +8,7 @@
  * explain them instead of guessing.
  */
 import { tool } from "ai";
+import { WorkflowRunFailedError } from "workflow/internal/errors";
 import { start } from "workflow/api";
 import { z } from "zod";
 import {
@@ -64,7 +65,14 @@ export type GetProductDetailsOutput =
   | { ok: true; product: ProductDetail }
   | ToolFailure;
 export type ReturnOrderOutput =
-  | { ok: true; status: "started"; orderId: string; runId: string }
+  | {
+      ok: true;
+      orderId: string;
+      runId: string;
+      returnId: string;
+      status: string;
+      refundAuthorizationId: string;
+    }
   | ToolFailure;
 
 // ---------------------------------------------------------------------------
@@ -166,7 +174,7 @@ async function getProductDetailsStep(input: {
   }
 }
 
-/** Starts the background return workflow and returns right away. */
+/** Starts the return workflow and waits for its result. */
 async function returnOrderStep(input: {
   orderId: string;
   reason: string;
@@ -174,12 +182,17 @@ async function returnOrderStep(input: {
   "use step";
   try {
     const run = await start(returnFlow, [input.orderId, input.reason]);
-    return { ok: true, status: "started", orderId: input.orderId, runId: run.runId };
+    const result = await run.returnValue;
+    return { ok: true, orderId: input.orderId, runId: run.runId, ...result };
   } catch (err) {
-    console.error("[returnOrder] could not start workflow:", err);
+    console.error("[returnOrder] return workflow failed:", err);
+    const cause = WorkflowRunFailedError.is(err) ? err.cause : null;
     return {
       ok: false,
-      error: "The return could not be started. Nothing was changed. Please try again.",
+      error:
+        cause instanceof Error && cause.name === "FatalError"
+          ? cause.message
+          : "The return could not be completed. Please try again.",
     };
   }
 }
@@ -218,7 +231,7 @@ export const shoppingTools = {
   }),
   returnOrder: tool({
     description:
-      "Start a return for an order. Needs the order id and the customer's reason. The return runs in the background; this call only starts it.",
+      "File a return for an order. Needs the order id and the customer's reason. Waits for the return workflow to finish and returns the return id, status and refund authorization id.",
     inputSchema: z.object({
       orderId: z.string().trim().min(1).max(64),
       reason: z.string().trim().min(3).max(500),

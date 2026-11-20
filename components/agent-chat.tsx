@@ -359,8 +359,8 @@ function ReturnResult({ output }: { output: ReturnOrderOutput }) {
   if (!output.ok) return <StatusLine tone="error">{output.error}</StatusLine>;
   return (
     <StatusLine tone="success">
-      Return filed for order {output.orderId}. It is being processed in the
-      background.
+      Return {output.returnId} filed for order {output.orderId} (status:{" "}
+      {output.status}). Refund authorization: {output.refundAuthorizationId}.
     </StatusLine>
   );
 }
