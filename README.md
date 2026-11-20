@@ -29,6 +29,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 The storefront only needs `BYPASS_SECRET` to run. The `STORE_BUSINESS_AGENT_*` variables are only required once you reach the admin-agent chapter.
 
+
 ## Environment variables
 
 | Variable | Required | Purpose |
